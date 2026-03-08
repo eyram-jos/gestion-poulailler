@@ -89,7 +89,11 @@ function Overview() {
                   Email: userData?.email || "-",
                   Ferme: userData?.farmName || "-",
                 }}
-                shadow={false}
+                social={[]}
+                action={{
+                  route: "/profile",
+                  tooltrip: "modifier profil",
+                }}
               />
             </Grid>
 
