@@ -25,6 +25,7 @@ if (!admin.apps.length) {
 const db = admin.apps.length ? admin.firestore() : null;
 
 const PAYDUNYA_HEADERS = {
+  "Content-Type": "application/json",
   "PAYDUNYA-MASTER-KEY": process.env.PAYDUNYA_MASTER_KEY,
   "PAYDUNYA-PRIVATE-KEY": process.env.PAYDUNYA_PRIVATE_KEY,
   "PAYDUNYA-PUBLIC-KEY": process.env.PAYDUNYA_PUBLIC_KEY,
@@ -52,7 +53,7 @@ app.post("/create-payment", async (req, res) => {
     const amount = 2500;
 
     const response = await axios.post(
-      "https://app.paydunya.com/api/v1/checkout-invoice/create",
+      "https://app.paydunya.com/sandbox-api/v1/checkout-invoice/create",
       {
         invoice: {
           total_amount: amount,
@@ -60,6 +61,11 @@ app.post("/create-payment", async (req, res) => {
         },
         store: {
           name: "PoultryPro",
+        },
+        actions: {
+          callback_url: "https://gestion-poulailler.onrender.com/paydunya-ipn",
+          return_url: "https://gestion-poulailler.onrender.com/payment-success",
+          cancel_url: "https://gestion-poulailler.onrender.com/payment-cancel",
         },
         custom_data: {
           userId: userId,
@@ -104,10 +110,19 @@ app.post("/create-payment", async (req, res) => {
   }
 });
 
+app.get("/payment-success", (req, res) => {
+  res.send("Paiement reçu. Vous pouvez retourner dans PoultryPro.");
+});
+
+app.get("/payment-cancel", (req, res) => {
+  res.send("Paiement annulé.");
+});
+
 app.post("/paydunya-ipn", async (req, res) => {
   try {
     if (!db) {
-      return res.status(500).send("Firestore non configure");
+      console.log("Firestore non configuré. IPN reçu mais PRO non activé.");
+      return res.status(200).send("OK WITHOUT FIRESTORE");
     }
 
     const data = req.body;
@@ -139,7 +154,7 @@ app.post("/paydunya-ipn", async (req, res) => {
         { merge: true }
       );
 
-      console.log("PRO active pour:", userId);
+      console.log("PRO activé pour:", userId);
     }
 
     return res.status(200).send("OK");
