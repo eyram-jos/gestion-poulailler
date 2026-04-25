@@ -36,6 +36,12 @@ app.get("/", (req, res) => {
   res.json({
     status: "ok",
     app: "PoultryPro Payment Backend",
+    paydunyaKeys: {
+      masterKeyExists: !!process.env.PAYDUNYA_MASTER_KEY,
+      privateKeyExists: !!process.env.PAYDUNYA_PRIVATE_KEY,
+      publicKeyExists: !!process.env.PAYDUNYA_PUBLIC_KEY,
+      tokenExists: !!process.env.PAYDUNYA_TOKEN,
+    },
   });
 });
 
@@ -50,13 +56,11 @@ app.post("/create-payment", async (req, res) => {
       });
     }
 
-    const amount = 2500;
-
     const response = await axios.post(
       "https://app.paydunya.com/sandbox-api/v1/checkout-invoice/create",
       {
         invoice: {
-          total_amount: amount,
+          total_amount: 2500,
           description: "Abonnement mensuel PoultryPro PRO",
         },
         store: {
@@ -80,31 +84,23 @@ app.post("/create-payment", async (req, res) => {
 
     const data = response.data;
 
-    const paymentUrl =
-      data.response_text ||
-      data.response_url ||
-      data.url ||
-      null;
-
-    if (!paymentUrl) {
-      return res.status(500).json({
+    if (data.response_code !== "00") {
+      return res.status(400).json({
         success: false,
-        message: "Lien PayDunya introuvable",
+        message: data.response_text || "Erreur PayDunya",
         raw: data,
       });
     }
 
     return res.json({
       success: true,
-      url: paymentUrl,
+      url: data.response_text,
       raw: data,
     });
   } catch (error) {
-    console.error("CREATE PAYMENT ERROR:", error.response?.data || error.message);
-
     return res.status(500).json({
       success: false,
-      message: "Erreur creation paiement",
+      message: "Erreur création paiement",
       error: error.response?.data || error.message,
     });
   }
@@ -121,21 +117,16 @@ app.get("/payment-cancel", (req, res) => {
 app.post("/paydunya-ipn", async (req, res) => {
   try {
     if (!db) {
-      console.log("Firestore non configuré. IPN reçu mais PRO non activé.");
       return res.status(200).send("OK WITHOUT FIRESTORE");
     }
 
     const data = req.body;
-    console.log("IPN PAYDUNYA:", JSON.stringify(data));
-
     const status = data.status || data.data?.status;
     const customData = data.custom_data || data.data?.custom_data || {};
     const userId = customData.userId;
 
     if (status === "completed" || status === "success" || status === "paid") {
-      if (!userId) {
-        return res.status(400).send("userId manquant");
-      }
+      if (!userId) return res.status(400).send("userId manquant");
 
       const now = new Date();
       const expireAt = new Date();
@@ -153,13 +144,10 @@ app.post("/paydunya-ipn", async (req, res) => {
         },
         { merge: true }
       );
-
-      console.log("PRO activé pour:", userId);
     }
 
     return res.status(200).send("OK");
   } catch (error) {
-    console.error("IPN ERROR:", error);
     return res.status(500).send("Erreur IPN");
   }
 });
