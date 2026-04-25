@@ -2,31 +2,33 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PaymentService {
+  static const String backendBaseUrl =
+      'https://gestion-poulailler.onrender.com';
+
   static Future<String?> createPayment(String userId) async {
     try {
-      final url = Uri.parse(
-          "https://us-central1-poultry-pro.cloudfunctions.net/createPayment");
-
       final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
+        Uri.parse('$backendBaseUrl/create-payment'),
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "amount": 2500,
-          "userId": userId,
+          'userId': userId,
         }),
       );
 
-      print("RESPONSE: ${response.body}");
+      print('PAYMENT STATUS: ${response.statusCode}');
+      print('PAYMENT BODY: ${response.body}');
+
+      if (response.statusCode != 200) return null;
 
       final data = jsonDecode(response.body);
 
-      if (data["response_code"] == "00") {
-        return data["response_text"]; // 🔥 URL paiement
+      if (data['success'] == true && data['url'] != null) {
+        return data['url'].toString();
       }
 
       return null;
     } catch (e) {
-      print("ERROR PAYMENT: $e");
+      print('ERROR PAYMENT: $e');
       return null;
     }
   }
