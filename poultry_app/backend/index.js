@@ -57,7 +57,7 @@ app.post("/create-payment", async (req, res) => {
     }
 
     const response = await axios.post(
-      "https://app.paydunya.com/sandbox-api/v1/checkout-invoice/create",
+      "https://app.paydunya.com/api/v1/checkout-invoice/create",
       {
         invoice: {
           total_amount: 2500,
