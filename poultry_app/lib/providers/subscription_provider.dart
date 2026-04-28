@@ -16,6 +16,47 @@ class SubscriptionProvider extends ChangeNotifier {
 
   bool get isFree => !isPro;
 
+  bool get isExpired => _current.isExpired;
+
+DateTime? get expireAt => _current.expireAt;
+
+int get daysRemaining {
+  if (_current.expireAt == null) return 999;
+  return _current.expireAt!
+      .difference(DateTime.now())
+      .inDays;
+}
+
+bool get shouldRenewWarn {
+  return isPro &&
+      expireAt != null &&
+      daysRemaining <= 5 &&
+      daysRemaining >= 0;
+}
+
+
+
+int get trialDaysRemaining {
+ if (_current.trialEndsAt == null) return 0;
+
+ final d = _current.trialEndsAt!
+     .difference(DateTime.now())
+     .inDays;
+
+ return d < 0 ? 0 : d;
+}
+
+bool get trialExpired {
+ if (_current.trialEndsAt == null) return false;
+
+ return DateTime.now().isAfter(
+   _current.trialEndsAt!,
+ );
+}
+
+
+
+
   Future<void> watch(String userId) async {
     await _repo.ensureSubscriptionExists(userId);
     await _sub?.cancel();

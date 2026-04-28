@@ -12,9 +12,9 @@ class SubscriptionRepo {
       await doc.set({
         'plan': 'free',
         'status': 'trial',
-        'trialEndsAt': Timestamp.fromDate(
-  DateTime.now().add(const Duration(days: 14)),
-),
+        'trialEndsAt': DateTime.now().add(const Duration(days: 14)),
+        'expireAt': null,
+        'createdAt': DateTime.now(),
       });
     }
   }
@@ -30,14 +30,14 @@ class SubscriptionRepo {
   }
 
   Future<void> setPlanDemo(String userId, {required bool pro}) async {
+    final now = DateTime.now();
+
     await _fs.collection('subscriptions').doc(userId).set({
       'plan': pro ? 'pro' : 'free',
       'status': pro ? 'active' : 'trial',
-      'trialEndsAt': pro
-    ? null
-    : Timestamp.fromDate(
-        DateTime.now().add(const Duration(days: 14)),
-      ),
-    });
+      'startDate': pro ? now : null,
+      'expireAt': pro ? now.add(const Duration(days: 30)) : null,
+      'updatedAt': now,
+    }, SetOptions(merge: true));
   }
 }
