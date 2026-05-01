@@ -103,7 +103,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            const Text('PoultryPro'),
+            const Text('OG PoultryPro'),
             const SizedBox(width: 10),
             _PlanBadge(subscription: subscription),
           ],

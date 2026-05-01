@@ -24,7 +24,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
       ],
       child: MaterialApp(
-        title: 'PoultryPro',
+        title: 'OG PoultryPro',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.theme,
         routes: {

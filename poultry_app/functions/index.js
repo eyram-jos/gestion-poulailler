@@ -15,10 +15,10 @@ exports.createPayment = functions.https.onRequest(async (req, res) => {
       {
         invoice: {
           total_amount: amount,
-          description: "Abonnement PoultryPro"
+          description: "Abonnement OG PoultryPro"
         },
         store: {
-          name: "PoultryPro"
+          name: "OG PoultryPro"
         },
         custom_data: {
           userId: userId

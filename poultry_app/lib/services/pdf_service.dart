@@ -16,7 +16,7 @@ class PdfService {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('PoultryPro - Rapport', style: pw.TextStyle(fontSize: 24)),
+              pw.Text('OG PoultryPro - Rapport', style: pw.TextStyle(fontSize: 24)),
               pw.SizedBox(height: 20),
 
               pw.Text('Dépenses: $totalExpenses FCFA'),
@@ -25,7 +25,7 @@ class PdfService {
               pw.Text('Mortalité: $mortality'),
 
               pw.SizedBox(height: 20),
-              pw.Text('Merci d\'utiliser PoultryPro'),
+              pw.Text('Merci d\'utiliser OG PoultryPro'),
             ],
           );
         },

@@ -56,7 +56,7 @@ class _WavePaymentScreenState extends State<WavePaymentScreen> {
                     SizedBox(height: 10),
                     Text('Numero Wave: 77 000 00 00'),
                     SizedBox(height: 10),
-                    Text('Nom: PoultryPro'),
+                    Text('Nom:OG PoultryPro'),
                   ],
                 ),
               ),

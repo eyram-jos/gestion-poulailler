@@ -28,7 +28,7 @@ class UpgradeScreen extends StatelessWidget {
           const SizedBox(height: 20),
 
           const Text(
-            '🚀 PoultryPro PRO',
+            '🚀 OG PoultryPro PRO',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
@@ -161,7 +161,7 @@ class UpgradeScreen extends StatelessWidget {
                       ),
                       onPressed: () async {
                         final message = '''
-Bonjour, je veux activer PoultryPro PRO.
+Bonjour, je veux activer OG PoultryPro PRO.
 
 Montant payé : $amount
 Paiement envoyé au : $paymentNumber

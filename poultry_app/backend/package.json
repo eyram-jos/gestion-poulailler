@@ -1,7 +1,7 @@
 {
   "name": "poultrypro-payment-backend",
   "version": "1.0.0",
-  "description": "Backend PayDunya for PoultryPro",
+  "description": "Backend PayDunya for OG PoultryPro",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

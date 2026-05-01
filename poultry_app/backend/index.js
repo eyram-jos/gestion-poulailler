@@ -61,10 +61,10 @@ app.post("/create-payment", async (req, res) => {
       {
         invoice: {
           total_amount: 2500,
-          description: "Abonnement mensuel PoultryPro PRO",
+          description: "Abonnement mensuel OG PoultryPro PRO",
         },
         store: {
-          name: "PoultryPro",
+          name: "OG PoultryPro",
         },
         actions: {
           callback_url: "https://gestion-poulailler.onrender.com/paydunya-ipn",
@@ -107,7 +107,7 @@ app.post("/create-payment", async (req, res) => {
 });
 
 app.get("/payment-success", (req, res) => {
-  res.send("Paiement reçu. Vous pouvez retourner dans PoultryPro.");
+  res.send("Paiement reçu. Vous pouvez retourner dans OG PoultryPro.");
 });
 
 app.get("/payment-cancel", (req, res) => {
@@ -153,5 +153,5 @@ app.post("/paydunya-ipn", async (req, res) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`PoultryPro backend running on port ${PORT}`);
+  console.log(`OG PoultryPro backend running on port ${PORT}`);
 });
