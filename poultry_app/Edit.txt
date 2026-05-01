@@ -5,7 +5,12 @@ git commit -m "Mise à jour de mon application OG PoultryPro"
 git push
 
     Pour mettre à jour l'app en ligne 
-flutter build web
-après avoir vu build/web tu mets le dossier web qui est dans poultry_app/build/web dans Render
 
+flutter build web
+
+après avoir vu build/web 
+Va sur ton projet Netlify et :
+Drag and drop your project folder here to deploy new changes
+
+tu mets le dossier web qui est dans poultry_app/build/web
 
