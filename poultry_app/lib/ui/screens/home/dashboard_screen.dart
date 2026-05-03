@@ -389,11 +389,13 @@ class _OverviewTab extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: () async {
               await PdfService.generateReport(
-                totalExpenses: totalExpenses,
-                totalRevenue: totalRevenue,
-                profit: profit,
-                mortality: mortality,
-              );
+              totalExpenses: totalExpenses,
+              totalRevenue: totalRevenue,
+              profit: profit,
+              mortality: mortality,
+              waves: waves,
+              activeWave: activeWave,
+            );
             },
             icon: const Icon(Icons.picture_as_pdf),
             label: const Text('Exporter le rapport PDF'),
@@ -691,6 +693,7 @@ class _WavesTab extends StatelessWidget {
               itemCount: waves.length,
               itemBuilder: (_, i) {
                 final w = waves[i];
+
                 return Card(
                   child: ListTile(
                     leading: const Icon(Icons.layers),
@@ -698,13 +701,61 @@ class _WavesTab extends StatelessWidget {
                     subtitle: Text(
                       '${w.chicks} poussins - début ${formatDate(w.startDate)}',
                     ),
-                    trailing: Chip(
-                      label: Text(w.isActive ? 'Actif' : 'Terminé'),
+
+                    // 🔥 NOUVELLE PARTIE
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Chip(
+                          label: Text(w.isActive ? 'Actif' : 'Terminé'),
+                          backgroundColor:
+                              w.isActive ? Colors.green : Colors.grey,
+                        ),
+
+                        if (w.isActive) ...[
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.check_circle,
+                                color: Colors.red),
+                            tooltip: 'Terminer la vague',
+                            onPressed: () async {
+                              final confirm = await showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title:
+                                      const Text('Terminer la vague'),
+                                  content: const Text(
+                                      'Êtes-vous sûr de vouloir terminer cette vague ?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: const Text('Annuler'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: const Text('Confirmer'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true) {
+                                await context
+                                    .read<WaveProvider>()
+                                    .endWave(w.id);
+                              }
+                            },
+                          ),
+                        ]
+                      ],
                     ),
                   ),
                 );
               },
             ),
+
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           if (!isPro && waves.length >= 1) {
@@ -740,19 +791,22 @@ class _WavesTab extends StatelessWidget {
             children: [
               TextField(
                 controller: nameCtrl,
-                decoration: const InputDecoration(labelText: 'Nom vague'),
+                decoration:
+                    const InputDecoration(labelText: 'Nom vague'),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: chicksCtrl,
                 keyboardType: TextInputType.number,
-                decoration:
-                    const InputDecoration(labelText: 'Nombre de poussins'),
+                decoration: const InputDecoration(
+                    labelText: 'Nombre de poussins'),
               ),
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: Text('Date début : ${formatDate(start)}')),
+                  Expanded(
+                      child:
+                          Text('Date début : ${formatDate(start)}')),
                   TextButton(
                     onPressed: () async {
                       final picked = await showDatePicker(
@@ -773,12 +827,12 @@ class _WavesTab extends StatelessWidget {
                   final name = nameCtrl.text.trim().isEmpty
                       ? 'Vague ${waves.length + 1}'
                       : nameCtrl.text.trim();
-                  final chicks = int.tryParse(chicksCtrl.text.trim()) ?? 0;
+                  final chicks =
+                      int.tryParse(chicksCtrl.text.trim()) ?? 0;
                   if (chicks <= 0) return;
 
-                  await context
-                      .read<WaveProvider>()
-                      .createWave(userId, name, chicks, start);
+                  await context.read<WaveProvider>().createWave(
+                      userId, name, chicks, start);
 
                   if (ctx.mounted) Navigator.pop(ctx);
                 },
