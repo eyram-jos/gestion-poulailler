@@ -1,7 +1,7 @@
    Pour mettre dans mon git
 git status
 git add .
-git commit -m "Mise à jour de mon application OG PoultryPro"
+git commit -m "Mise à jour de mon application OG PoultryPro page paiement"
 git push
 
     Pour mettre à jour l'app en ligne 
